@@ -197,11 +197,12 @@ class WritAR: NSObject, AVCaptureAudioDataOutputSampleBufferDelegate {
         }
         
         if videoInput.isReadyForMoreMediaData {
-            append(pixel: buffer, with: time)
-            currentDuration = time.seconds - startingVideoTime!.seconds
-            isRecording = true
-            isWritingWithoutError = true
-            delegate?.recorder?(didUpdateRecording: currentDuration)
+            if append(pixel: buffer, with: time) {
+                currentDuration = time.seconds - startingVideoTime!.seconds
+                isRecording = true
+                isWritingWithoutError = true
+                delegate?.recorder?(didUpdateRecording: currentDuration)
+            }
         }
     }
 
@@ -243,7 +244,7 @@ class WritAR: NSObject, AVCaptureAudioDataOutputSampleBufferDelegate {
 
 @available(iOS 11.0, *)
 private extension WritAR {
-    func append(pixel buffer: CVPixelBuffer, with time: CMTime) {
+    func append(pixel buffer: CVPixelBuffer, with time: CMTime) -> Bool {
         pixelBufferInput.append(buffer, withPresentationTime: time)
     }
 }
